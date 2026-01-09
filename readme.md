@@ -1,10 +1,10 @@
-已归档，死了，我没空继续维护它
+个人自用，看到issue有时间就改
 
 # Sakurairo
 
 将 [WordPress 主题 Sakurairo](https://github.com/mirai-mamori/Sakurairo) 移植到 VitePress。
 
-演示站点：[iro.keqing.moe](https://iro.keqing.moe) 和 [iro.pages.dev](https://iro.pages.dev)。
+演示站点：[me](https://me.imsuk.cn) 。
 
 使用文档：[docs.keqing.moe/iro](https://docs.keqing.moe/iro/)。
 
@@ -38,7 +38,7 @@ npm run build
 npm run preview
 ```
 
-部署于静态站点托管平台（如 GitHub Pages 或 Cloudflare Pages）的流程与其他 VitePress 项目相同。
+部署于静态站点托管平台（如 GitHub Pages 或 Edgeone Pages）的流程与其他 VitePress 项目相同。
 
 ## 自定义
 
@@ -62,15 +62,15 @@ npm run preview
   - 使用 `iro-not-found` 以自定义 404 页面
   - 使用 `iro-page` 以自定义 **自定义页面**（与 VitePress 默认主题的 `layout` 为 `page` 的页面行为类似）。 
   - 使用 `iro-home` 以自定义首页
-  - 使用 `iro-post-list` 以自定义首页文章展示部分
-  - 使用 `iro-post` 以自定义文章页面
+  - 使用 `iro-post-list` 无文章
+  - 使用 `iro-post` 无文章
   - 使用 `iro-other` 以自定义其他页面
   - 使用 `iro-footer` 以在页脚添加自定义组件
   - 以上的插槽都被转发到 `Iro.vue` ，可以在其中找到
 - 重写内部组件：
   - 重写 `Home.vue` 以自定义首页
   - 重写 `Panel.vue` 以自定义右下角小工具面板
-  - 重写 `Footer.vue` 以自定义整个页脚
+  - 重写 `Footer.vue` 无页脚
   - 重写 `Cover.vue` 以自定义首页封面
   - 重写 `CoverSocialButton.vue` 以自定义首页社交链接
   - 重写 `NavMo.vue` 以自定义移动端侧边栏
@@ -90,25 +90,17 @@ npm run preview
 
 很抱歉，由于能力问题，我暂时没有做任何 SSR 兼容，这是通过 `Iro.vue` 来封装 `Layout.vue` 并套上一层 `<ClientOnly>` 实现的。因此，当您自己编写组件并放入插槽或者用于重写时，暂时也可以不做 SSR 兼容，但在未来的版本，您可能需要进行修改以适应 SSR 兼容的 Sakurairo。
 
-### 站内搜索功能
+### 站外搜索功能
 
-该功能会在未来的版本中得到支持，但如果您要自己实现该功能，可以按如下的方式实现：
-
-1. 配置 `iro.ts` ，填写 `iro.search` 字段。
-2. 自己实现一个位于 ``` `http(s)://您的域名/`${iro.search.path}?${iro.search.param}=搜索内容 ``` （这是一个模板字符串）的搜索页面，例如 `https://keqing.moe/?s=114514` ，您需要自己处理参数实现站内搜索功能。
+导航栏的搜索按钮会拼接字符到https://imsuk.cn/s/中
 
 ## 发展规划
 
 - 实现更多原版 Sakurairo 的样式。
 - 增强可拓展性。
 - 优化项目结构和代码组织。
-- 发布 npm 包。
-- 评论系统。
 - 统计功能。
-- 辅助配置主题的控制面板或脚本。
-- 站内搜索功能。
 - 字体自定义。
-- SSR 兼容
 
 ## 开源信息
 
