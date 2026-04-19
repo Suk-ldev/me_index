@@ -21,7 +21,7 @@ export default {
     nav: {
         icon: '/res/icon.png',
         links: [
-            { title: '导航站', url: 'https://www.imsuk.cn' },
+            { title: '博客', url: 'https://imsuk.cn' },
         ]
     },
     search: {
@@ -34,6 +34,11 @@ export default {
                 icon: 'github',
                 link: 'https://github.com/Suk-ldev',
                 name: 'GitHub'
+            },
+            {
+                icon: 'bilibili',
+                link: 'https://space.bilibili.com/1549763683',
+                name: 'Bilibili'
             },
             {
                 icon: 'mail',
