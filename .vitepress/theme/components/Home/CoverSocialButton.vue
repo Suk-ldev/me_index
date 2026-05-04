@@ -11,7 +11,7 @@ const { iroIconName, iroIconUrl, iroLink, alt } = defineProps({
     alt: String
 });
 
-const url = iroIconName == 'custom' ? iroIconUrl : (new URL(`${iconPkg}/${iroIconName}.png`, iconUrl).href);
+const url = iroIconName == 'custom' ? iroIconUrl : (new URL(`${iconPkg}/${iroIconName}.webp`, iconUrl).href);
 
 </script>
 
