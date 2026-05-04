@@ -51,6 +51,11 @@ export default {
                 name: 'X'
             },
             {
+                icon: 'zhihu',
+                link: 'https://www.zhihu.com/people/xu-ming-88-36',
+                name: 'Zhihu'
+            },
+            {
                 icon: 'tg',
                 link: 'https://t.me/Suk_2',
                 name: 'telegram'
