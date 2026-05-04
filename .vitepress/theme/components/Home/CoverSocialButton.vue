@@ -1,8 +1,8 @@
 <script setup>
 import { data as iro } from '../../iro.data';
 
-const iconUrl = iro.social?.iconUrl ?? 'https://s.nmxc.ltd/sakurairo_vision/@2.6/display_icon/';
-const iconPkg = iro.social?.iconPkg ?? 'sakura';
+const iconUrl = iro.social?.iconUrl ?? 'https://s.nmxc.ltd/sakurairo_vision/@3.0/display_icon/';
+const iconPkg = iro.social?.iconPkg ?? 'fluent_design';
 
 const { iroIconName, iroIconUrl, iroLink, alt } = defineProps({
     iroIconName: String,
