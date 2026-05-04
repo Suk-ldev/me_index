@@ -1,21 +1,37 @@
 import { Iro } from "./types.mts";
-import posts from "./posts";
 
 /**
- * VitePress 主题 Sakurairo 的配置文件
+ * 个人主页配置入口。
+ *
+ * 常用开关：
+ * - home.showPostList：是否在首页封面下显示文章列表
+ * - home.showContent：是否显示 index.md 里封面之后的内容
+ * - features.cherryBlossom：是否开启樱花飘落动画
  */
+const randomWallpaperApi = 'https://api.imsuk.cn/RandomImg';
+const randomSignatureApi = 'https://api.imsuk.cn/hitokoto/index.php';
+
 export default {
     title: "Suk的主页",
-    titleTemplate: "天命之子的Suk",
+    titleTemplate: "",
     description: "天命之子Suk的主页",
     favicon: '/res/favicon.png',
+    home: {
+        showContent: false,
+        showPostList: true,
+        postListTitle: '文章',
+    },
+    features: {
+        cherryBlossom: true,
+    },
     cover: {
         avatar: '/res/avatar.png',
-        signature: '天不老，情难绝',
+        signature: '',
+        signatureApi: randomSignatureApi,
         background: {
             random: true,
-            desktop: 'https://t.alcy.cc/fj/',
-            mobile: 'https://t.alcy.cc/mp/',
+            desktop: randomWallpaperApi,
+            mobile: randomWallpaperApi,
         }
     },
     nav: {
@@ -29,6 +45,8 @@ export default {
         param: 's',
     },
     social: {
+        iconUrl: 'https://s.nmxc.ltd/sakurairo_vision/@3.0/display_icon/',
+        iconPkg: 'fluent_design',
         links: [
             {
                 icon: 'github',
@@ -68,6 +86,7 @@ export default {
         ]
     },
     footer: {
+        enabled: false,
         content: ''
     },
     style: {
@@ -78,5 +97,5 @@ export default {
         menuRadius: '10px',
         menuSelectionRadius: '10px',
     },
-    posts: posts
+    posts: []
 } satisfies Iro.Config;

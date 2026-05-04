@@ -8,9 +8,18 @@ export default {
     titleTemplate: "Sakurairo 主题演示站点",
     description: "Hello world!",
     favicon: '/favicon.png',
+    home: {
+        showContent: true,
+        showPostList: true,
+        postListTitle: '文章',
+    },
+    features: {
+        cherryBlossom: true,
+    },
     cover: {
         avatar: '/avatar.png',
         signature: '正在努力移植到 VitePress！',
+        signatureApi: 'https://api.imsuk.cn/hitokoto/index.php',
         background: {
             random: true,
             desktop: 'https://t.alcy.cc/fj/',
@@ -49,6 +58,7 @@ export default {
         ]
     },
     footer: {
+        enabled: true,
         content: 'Hello world!',
         beforeSlot: false,
     },

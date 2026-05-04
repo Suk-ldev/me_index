@@ -1,6 +1,6 @@
 <script setup>
 import { useData } from 'vitepress'
-import { onMounted, onUnmounted, provide, ref, watch } from 'vue';
+import { onMounted, onUnmounted, provide, ref, useSlots, watch } from 'vue';
 
 import NotFound from './NotFound.vue';
 import Home from './components/Home/Home.vue';
@@ -8,6 +8,7 @@ import Nav from './components/Header/Nav.vue';
 import Panel from './components/Panel.vue';
 import NavMo from './components/Header/NavMo.vue';
 import Post from './components/Post/Post.vue'
+import Footer from './components/Footer.vue';
 
 import { data as iro } from './iro.data';
 import CherryBlossom from './cherryBlossom.js';
@@ -15,6 +16,7 @@ import CherryBlossom from './cherryBlossom.js';
 let cherryBlossom = null;
 
 const { frontmatter, page } = useData();
+const slots = useSlots();
 
 const iroDark = ref(
     localStorage.getItem('iro-theme') == 'dark'
@@ -48,9 +50,10 @@ scrollHandle();
 
 onMounted(() => {
     addEventListener('scroll', scrollHandle);
-    // Initialize cherry blossom animation
-    cherryBlossom = new CherryBlossom();
-    cherryBlossom.start();
+    if (iro.features?.cherryBlossom ?? true) {
+        cherryBlossom = new CherryBlossom();
+        cherryBlossom.start();
+    }
 });
 onUnmounted(() => {
     removeEventListener('scroll', scrollHandle);
@@ -88,8 +91,14 @@ for (let key in iro.style) {
                 </slot>
                 <slot v-else-if="frontmatter.layout == 'home'" name="iro-home">
                     <Home>
-                        <template v-slot:iro-home-page>
+                        <template v-if="slots['iro-signature']" v-slot:iro-signature>
+                            <slot name="iro-signature"></slot>
+                        </template>
+                        <template v-if="slots['iro-home-page']" v-slot:iro-home-page>
                             <slot name="iro-home-page"></slot>
+                        </template>
+                        <template v-if="slots['iro-post-list']" v-slot:iro-post-list>
+                            <slot name="iro-post-list"></slot>
                         </template>
                     </Home>
                 </slot>
@@ -101,6 +110,11 @@ for (let key in iro.style) {
                 <slot v-else name="iro-other">
                     <Content />
                 </slot>
+                <Footer v-if="iro.footer?.enabled ?? false">
+                    <template v-slot:iro-footer>
+                        <slot name="iro-footer"></slot>
+                    </template>
+                </Footer>
             </div>
 
             

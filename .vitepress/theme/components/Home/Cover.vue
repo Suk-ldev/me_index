@@ -1,6 +1,5 @@
 <script setup>
-import { useData } from 'vitepress';
-import { computed, inject, ref, onMounted } from 'vue';
+import { computed, inject, ref, onMounted, onUnmounted } from 'vue';
 import CoverSocialButton from './CoverSocialButton.vue';
 
 import { data as iro } from '../../iro.data';
@@ -8,6 +7,8 @@ import { data as iro } from '../../iro.data';
 const iroDark = inject('iroDark');
 
 const iroBgPageId = ref(0);
+const iroBgLoading = ref(false);
+const iroBgSwitchToken = ref(0);
 
 const iroRandom = iro.cover.background?.random ?? false;
 
@@ -17,35 +18,175 @@ const isMobile = () => {
 }
 
 const iroBgUrlRaw = isMobile() ? iro.cover.background.mobile : iro.cover.background.desktop;
+const appendCacheKey = (url, key) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}${key}`;
+};
 
-const iroBgUrl = computed(() => {
-    return iroRandom ? iroBgUrlRaw + '?' + iroBgPageId.value : iroBgUrlRaw
+const getIroBgUrl = pageId => iroRandom ? appendCacheKey(iroBgUrlRaw, pageId) : iroBgUrlRaw;
+const iroBgUrl = ref(getIroBgUrl(iroBgPageId.value));
+
+const preloadImage = url => new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(url);
+    image.onerror = reject;
+    image.src = url;
 });
 
-onMounted(() => {
-    const chakhsu = function(r) {
-        function t() { return b[Math.floor(Math.random() * b.length)] }
-        function e() { return String.fromCharCode(94 * Math.random() + 33) }
-        function n(r) {
-            for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
-                var l = document.createElement("span");
-                l.textContent = e(), l.style.color = t(), n.appendChild(l)
-            }
-            return n
-        }
-        function i() {
-            var t = o[c.skillI];
-            c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
-        }
-        /*以下内容自定义修改*/
-        var l = "", o = ["天不老，情难绝！"].map(function(r) { return r + "" }), a = 2, g = 1, s = 5, d = 75, b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)" ], c = { text: "", prefixP: -s, skillI: 0, skillP: 0, direction: "forward", delay: a, step: g };
-        i()
-    };
-    
-    const element = document.getElementById('chakhsu');
-    if (element) {
-        chakhsu(element);
+const switchIroBg = async(step) => {
+    if (!iroRandom) return;
+
+    const nextPageId = iroBgPageId.value + step;
+    const nextUrl = getIroBgUrl(nextPageId);
+    const token = ++iroBgSwitchToken.value;
+
+    iroBgLoading.value = true;
+    try {
+        await preloadImage(nextUrl);
+        if (token != iroBgSwitchToken.value) return;
+
+        iroBgPageId.value = nextPageId;
+        iroBgUrl.value = nextUrl;
     }
+    finally {
+        if (token == iroBgSwitchToken.value) {
+            iroBgLoading.value = false;
+        }
+    }
+};
+
+const signatureText = (iro.cover.signature ?? '').trim();
+const signatureDisplay = ref('');
+const signatureNoise = ref([]);
+const signatureApi = iro.cover.signatureApi ?? 'https://api.imsuk.cn/hitokoto/index.php';
+const signatureColors = [
+    'rgb(110,64,170)',
+    'rgb(150,61,179)',
+    'rgb(191,60,175)',
+    'rgb(228,65,157)',
+    'rgb(254,75,131)',
+    'rgb(255,94,99)',
+    'rgb(255,120,71)',
+    'rgb(251,150,51)',
+    'rgb(226,183,47)',
+    'rgb(198,214,60)',
+    'rgb(175,240,91)',
+    'rgb(127,246,88)',
+    'rgb(82,246,103)',
+    'rgb(48,239,130)',
+    'rgb(29,223,163)',
+    'rgb(26,199,194)',
+    'rgb(35,171,216)',
+    'rgb(54,140,225)',
+    'rgb(76,110,219)',
+    'rgb(96,84,200)',
+];
+let signatureTimer = null;
+
+const clearSignatureTimer = () => {
+    if (signatureTimer) {
+        clearTimeout(signatureTimer);
+        signatureTimer = null;
+    }
+};
+
+const randomNoiseChar = () => String.fromCharCode(94 * Math.random() + 33);
+const randomNoise = count => Array.from({ length: count }, () => ({
+    char: randomNoiseChar(),
+    color: signatureColors[Math.floor(Math.random() * signatureColors.length)],
+}));
+
+const getRandomSignatureList = payload => {
+    const source = Array.isArray(payload?.data) ? payload.data : payload;
+    if (Array.isArray(source)) {
+        return source
+            .map(item => typeof item == 'string' ? item : item?.text)
+            .filter(Boolean);
+    }
+
+    return [payload?.text, payload?.hitokoto, typeof payload == 'string' ? payload : '']
+        .filter(Boolean);
+};
+
+const startSignatureTyping = (sentences, withNoise, onListDone) => {
+    clearSignatureTimer();
+
+    const list = sentences.map(item => String(item).trim()).filter(Boolean);
+    if (!list.length) {
+        signatureDisplay.value = iro.description;
+        signatureNoise.value = [];
+        return;
+    }
+
+    let listIndex = 0;
+    let charIndex = 0;
+    let direction = 'forward';
+
+    const tick = () => {
+        const text = list[listIndex];
+        signatureDisplay.value = text.slice(0, charIndex);
+        signatureNoise.value = withNoise && direction == 'forward' && charIndex < text.length
+            ? randomNoise(Math.min(5, text.length - charIndex))
+            : [];
+
+        if (direction == 'forward') {
+            if (charIndex < text.length) {
+                charIndex++;
+                signatureTimer = setTimeout(tick, 75);
+                return;
+            }
+
+            direction = 'backward';
+            signatureTimer = setTimeout(tick, withNoise ? 900 : 1400);
+            return;
+        }
+
+        if (charIndex > 0) {
+            charIndex--;
+            signatureTimer = setTimeout(tick, withNoise ? 75 : 45);
+            return;
+        }
+
+        if (onListDone && listIndex == list.length - 1) {
+            signatureTimer = setTimeout(onListDone, 180);
+            return;
+        }
+
+        listIndex = (listIndex + 1) % list.length;
+        direction = 'forward';
+        signatureTimer = setTimeout(tick, 180);
+    };
+
+    tick();
+};
+
+const startRandomSignature = async() => {
+    try {
+        const response = await fetch(signatureApi);
+        const responseText = await response.text();
+        let payload = responseText;
+        try {
+            payload = JSON.parse(responseText);
+        }
+        catch {}
+        startSignatureTyping(getRandomSignatureList(payload), false, startRandomSignature);
+    }
+    catch {
+        startSignatureTyping([iro.description], false);
+    }
+};
+
+onMounted(() => {
+    if (signatureText) {
+        startSignatureTyping([signatureText], true);
+        return;
+    }
+
+    startRandomSignature();
+});
+
+onUnmounted(() => {
+    clearSignatureTimer();
 });
 </script>
 
@@ -60,35 +201,19 @@ onMounted(() => {
                 </div>
                 <div class="iro-signature">
                     <slot name="iro-signature">
-                        <div id="chakhsu"></div>
-                        <script>
-                            var chakhsu = function(r) {
-                                function t() { return b[Math.floor(Math.random() * b.length)] }
-                                function e() { return String.fromCharCode(94 * Math.random() + 33) }
-                                function n(r) {
-                                    for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
-                                        var l = document.createElement("span");
-                                        l.textContent = e(), l.style.color = t(), n.appendChild(l)
-                                    }
-                                    return n
-                                }
-                                function i() {
-                                    var t = o[c.skillI];
-                                    c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
-                                }
-                                /*以下内容自定义修改*/
-                                var l = "", o = ["天不老，情难绝！"].map(function(r) { return r + "" }), a = 2, g = 1, s = 5, d = 75, b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)" ], c = { text: "", prefixP: -s, skillI: 0, skillP: 0, direction: "forward", delay: a, step: g };
-                                i()
-                            };
-                            chakhsu(document.getElementById('chakhsu'));
-                        </script>
+                        <p id="typedWord" class="iro-signature-text">
+                            <span>{{ signatureDisplay }}</span>
+                            <span v-for="(item, index) in signatureNoise" :key="index" :style="{ color: item.color }">
+                                {{ item.char }}
+                            </span>
+                        </p>
                     </slot>
                 </div>
 
                 <div class="iro-social">
                     <CoverSocialButton v-if="iroRandom" iro-icon-name="custom"
                         iro-icon-url="https://s.nmxc.ltd/sakurairo_vision/@2.6/display_icon/sakura/pre.png"
-                        @click="() => { --iroBgPageId; }" alt="上一篇">
+                        @click="switchIroBg(-1)" alt="上一篇">
                     </CoverSocialButton>
 
                     <CoverSocialButton v-if="iro.social?.links" v-for="link in iro.social.links"
@@ -97,7 +222,7 @@ onMounted(() => {
 
                     <CoverSocialButton v-if="iroRandom" iro-icon-name="custom"
                         iro-icon-url="https://s.nmxc.ltd/sakurairo_vision/@2.6/display_icon/sakura/next.png"
-                        @click="() => { ++iroBgPageId; }" alt="下一篇">
+                        @click="switchIroBg(1)" alt="下一篇">
                     </CoverSocialButton>
                 </div>
             </div>
@@ -192,7 +317,10 @@ onMounted(() => {
                 animation: iro-fade-in-down 2s;
 
                 p {
+                    display: block;
                     font-size: 16px;
+                    min-height: 30px;
+                    line-height: 30px;
                     animation: iro-fade-in-down 2s;
                     margin: 0;
                     font-family: 'Noto Serif SC';

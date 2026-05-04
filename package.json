@@ -1,6 +1,7 @@
 {
     "name": "sakurairo",
     "version": "1.0.0",
+    "type": "module",
     "description": "将 WordPress 主题 Sakurairo 移植到 VitePress",
     "scripts": {
         "dev": "vitepress dev --host 0.0.0.0",

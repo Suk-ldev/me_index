@@ -2,24 +2,34 @@
 import { inject } from 'vue';
 
 import { data as iro } from '../../iro.data';
+import { data as loadedPosts } from '../../posts.data';
 
 const iroDark = inject('iroDark');
 
 import PostListItem from './PostListItem.vue';
 
-const posts = iro.posts;
-const bg = iro.cover.background;
+const appendCacheKey = (url, key) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}${key}`;
+};
 
-for (let i in posts) {
-    posts[i].floatRight = (i % 2) == 0;
-    if (!('thumb' in posts[i])) {
-        let thumb = bg.desktop;
-        if (bg.random) {
-            thumb += `?${i}`;
-        }
-        posts[i].thumb = thumb;
+const bg = iro.cover.background;
+const title = iro.home?.postListTitle ?? '文章';
+
+const postsSource = iro.posts?.length ? iro.posts : loadedPosts;
+
+const posts = postsSource.map((post, index) => {
+    let thumb = post.thumb ?? bg.desktop;
+    if (!post.thumb && bg.random) {
+        thumb = appendCacheKey(thumb, index);
     }
-}
+
+    return {
+        ...post,
+        thumb,
+        floatRight: (index % 2) == 0,
+    };
+});
 
 </script>
 
@@ -31,10 +41,11 @@ for (let i in posts) {
                     <h1 class="title">
                         <fa-i icon="fa-solid fa-feather"></fa-i>
                         <br>
-                        文章
+                        {{ title }}
                     </h1>
-                    <PostListItem v-for="(post, index) in posts" :title="post.title" :url="post.url" :thumb="post.thumb"
-                        :date="post.date" :description="post.description" :float-right="post.floatRight"></PostListItem>
+                    <PostListItem v-for="post in posts" :key="post.url" :title="post.title" :url="post.url"
+                        :thumb="post.thumb" :date="post.date" :description="post.description"
+                        :float-right="post.floatRight"></PostListItem>
                 </main>
                 <div class="iro-pagination"></div>
             </div>

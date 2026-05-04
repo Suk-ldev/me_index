@@ -9,7 +9,7 @@ const { url, thumb, title, date, description, floatRight } = defineProps({
     url: String,
     thumb: String,
     title: String,
-    date: String,
+    date: [String, Number, Date],
     description: String,
     floatRight: {
         type: Boolean,
@@ -24,14 +24,14 @@ const { url, thumb, title, date, description, floatRight } = defineProps({
         <article class="iro-root"
             :class="{ 'iro-light': !iroDark, 'iro-dark': iroDark, 'iro-thumb-float-right': floatRight }" itemscope
             itemtype=" http://schema.org/BlogPosting">
-            <div class="iro-thumb" :style="{ float: floatRight }">
+            <div class="iro-thumb">
                 <a :href="url">
                     <img :alt="title" loading="lazy" :src="thumb">
                 </a>
             </div>
-            <div class="iro-post" :style="{ float: floatRight }">
+            <div class="iro-post">
                 <div class="iro-post-content">
-                    <div class="iro-post-date">
+                    <div v-if="date" class="iro-post-date">
                         <fa-i icon="fa-regular fa-clock"></fa-i>
                         发布于 {{ date }}
                     </div>

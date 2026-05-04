@@ -1,12 +1,44 @@
 export namespace Iro {
     /**
+     * 首页显示相关设置
+     */
+    export interface Home {
+        /**
+         * 是否显示 index.md 中封面之后的正文内容
+         */
+        showContent?: boolean;
+        /**
+         * 是否在首页封面下显示文章列表
+         */
+        showPostList?: boolean;
+        /**
+         * 首页文章列表标题
+         */
+        postListTitle?: string;
+    };
+
+    /**
+     * 主题功能开关
+     */
+    export interface Features {
+        /**
+         * 是否开启樱花飘落动画
+         */
+        cherryBlossom?: boolean;
+    };
+
+    /**
      * 封面设置
      */
     export interface Cover {
         /**
-         * 封面的签名，纯文本，html 不起作用
+         * 封面的签名，纯文本，html 不起作用。留空时使用 signatureApi 获取随机句子
          */
         signature: string;
+        /**
+         * 随机句子 API。仅在 signature 留空时启用
+         */
+        signatureApi?: string;
         /**
          * 网站拥有者的头像的 url，直接作为 img 元素的 src 属性值，会在主页展示
          */
@@ -144,6 +176,10 @@ export namespace Iro {
      */
     export interface Footer {
         /**
+         * 是否显示页脚
+         */
+        enabled?: boolean;
+        /**
          * 页脚内容，可以填 html
          */
         content?: string;
@@ -229,6 +265,14 @@ export namespace Iro {
          * 网页图标的 url，直接作为 img 元素的 src 属性值
          */
         favicon: string;
+        /**
+         * 首页显示相关设置
+         */
+        home?: Home;
+        /**
+         * 主题功能开关
+         */
+        features?: Features;
         /**
          * 封面设置
          */

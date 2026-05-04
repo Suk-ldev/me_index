@@ -44,11 +44,19 @@ npm run preview
 
 ### 基本自定义
 
-基本配置存放在 `iro.ts` 中，您可以自由修改。在 `types.mts` 中可以看到 `IroConfig` 的各种属性及其用法。`iro-example.ts` 中把每一个属性都写出来了，可以用作参考，或是直接复制后修改。
+基本配置集中在 `.vitepress/theme/config/iro.ts` 中，您可以自由修改。在 `types.mts` 中可以看到 `IroConfig` 的各种属性及其用法。`example.ts` 中把每一个属性都写出来了，可以用作参考，或是直接复制后修改。
+
+常用开关也都在 `iro.ts`：
+
+- `home.showContent`：是否显示 `index.md` 中封面之后的正文
+- `home.showPostList`：是否在首页显示文章列表
+- `features.cherryBlossom`：是否开启樱花飘落动画
+- `footer.enabled`：是否显示页脚
+- `cover.signature`：个人介绍；有内容时使用乱码打字动画，留空时使用 `cover.signatureApi` 的随机句子
 
 在 `config.ts` 中添加 `markdown-it` 插件，默认自带<ruby>注音符号<rt>振假名</rt></ruby>插件 (@mdit/plugin-ruby)，使用的方式请自行参考该插件的文档。
 
-直接在根目录下创建 `.md` 文件撰写文章，将图片等资源文件放在 `public/` 目录下，如同本存储库演示的一样。
+文章统一放在根目录的 `posts/` 目录下，例如 `posts/hello.md`。图片等资源文件放在 `public/` 目录下，例如 `public/res/posts/hello.jpg`，在 Markdown 中使用 `/res/posts/hello.jpg` 引用。
 
 使用了 Font Awesome Icons，并注册了全局组件 `<fa-i>`，使用方式请参考 [官方文档](https://docs.fontawesome.com/web/use-with/vue/style)。
 
@@ -62,15 +70,15 @@ npm run preview
   - 使用 `iro-not-found` 以自定义 404 页面
   - 使用 `iro-page` 以自定义 **自定义页面**（与 VitePress 默认主题的 `layout` 为 `page` 的页面行为类似）。 
   - 使用 `iro-home` 以自定义首页
-  - 使用 `iro-post-list` 无文章
-  - 使用 `iro-post` 无文章
+  - 使用 `iro-post-list` 以自定义首页文章列表
+  - 使用 `iro-post` 以自定义文章页面
   - 使用 `iro-other` 以自定义其他页面
   - 使用 `iro-footer` 以在页脚添加自定义组件
   - 以上的插槽都被转发到 `Iro.vue` ，可以在其中找到
 - 重写内部组件：
   - 重写 `Home.vue` 以自定义首页
   - 重写 `Panel.vue` 以自定义右下角小工具面板
-  - 重写 `Footer.vue` 无页脚
+  - 重写 `Footer.vue` 以自定义页脚
   - 重写 `Cover.vue` 以自定义首页封面
   - 重写 `CoverSocialButton.vue` 以自定义首页社交链接
   - 重写 `NavMo.vue` 以自定义移动端侧边栏

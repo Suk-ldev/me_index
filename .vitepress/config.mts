@@ -2,6 +2,9 @@ import { defineConfigWithTheme } from 'vitepress';
 import { ruby } from "@mdit/plugin-ruby";
 import iro from './theme/config/iro';
 import { statSync } from 'fs';
+import { normalizePath } from 'vite';
+
+const rootDir = normalizePath(process.cwd());
 
 export default defineConfigWithTheme({
     title: iro.title,
@@ -25,14 +28,17 @@ export default defineConfigWithTheme({
 
         pageData.lastUpdated = statSync(pageData.filePath).mtimeMs
 
-        if (!('layout' in pageData.frontmatter)) {
+        const pagePath = normalizePath(pageData.filePath);
+        const relativePagePath = pagePath.startsWith(`${rootDir}/`) ? pagePath.slice(rootDir.length + 1) : pagePath;
+        const isPost = relativePagePath.startsWith('posts/');
+
+        if (isPost && !('layout' in pageData.frontmatter)) {
             pageData.frontmatter.layout = 'post'
         }
 
-        const title = '自述文件';
-        if (pageData.filePath == 'readme.md') {
-            pageData.title = title;
-            pageData.frontmatter.title = title;
+        if (relativePagePath.toLowerCase() == 'readme.md') {
+            pageData.title = '自述文件';
+            pageData.frontmatter.title = '自述文件';
         }
     },
 });
