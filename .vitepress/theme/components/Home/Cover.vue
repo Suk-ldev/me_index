@@ -86,15 +86,18 @@ onMounted(() => {
                 </div>
 
                 <div class="iro-social">
-                    <CoverSocialButton v-if="iroRandom" iro-icon-name="pre" @click="() => { --iroBgPageId; }" alt="上一篇">
+                    <CoverSocialButton v-if="iroRandom" iro-icon-name="custom"
+                        iro-icon-url="https://s.nmxc.ltd/sakurairo_vision/@2.6/display_icon/sakura/pre.png"
+                        @click="() => { --iroBgPageId; }" alt="上一篇">
                     </CoverSocialButton>
 
                     <CoverSocialButton v-if="iro.social?.links" v-for="link in iro.social.links"
                         :iro-icon-name="link.icon" :iro-icon-url="link?.iconUrl" :iro-link="link.link" :alt="link.name">
                     </CoverSocialButton>
 
-                    <CoverSocialButton v-if="iroRandom" iro-icon-name="next" @click="() => { ++iroBgPageId; }"
-                        alt="下一篇">
+                    <CoverSocialButton v-if="iroRandom" iro-icon-name="custom"
+                        iro-icon-url="https://s.nmxc.ltd/sakurairo_vision/@2.6/display_icon/sakura/next.png"
+                        @click="() => { ++iroBgPageId; }" alt="下一篇">
                     </CoverSocialButton>
                 </div>
             </div>
