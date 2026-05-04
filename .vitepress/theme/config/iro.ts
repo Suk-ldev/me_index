@@ -7,22 +7,24 @@ import { Iro } from "./types.mts";
  * - home.showPostList：是否在首页封面下显示文章列表
  * - home.showContent：是否显示 index.md 里封面之后的内容
  * - features.cherryBlossom：是否开启樱花飘落动画
+ * - features.cursor：鼠标指针样式，cat / dot / system
  */
 const randomWallpaperApi = 'https://api.imsuk.cn/RandomImg';
 const randomSignatureApi = 'https://api.imsuk.cn/hitokoto/index.php';
 
 export default {
-    title: "Suk的主页",
-    titleTemplate: "",
-    description: "天命之子Suk的主页",
+    title: "天命之子",
+    titleTemplate: "Suk",
+    description: "Suk的个人主页",
     favicon: '/res/favicon.png',
     home: {
         showContent: false,
-        showPostList: true,
+        showPostList: false,
         postListTitle: '文章',
     },
     features: {
         cherryBlossom: true,
+        cursor: 'dot',
     },
     cover: {
         avatar: '/res/avatar.png',
@@ -37,7 +39,7 @@ export default {
     nav: {
         icon: '/res/icon.png',
         links: [
-            { title: '博客', url: 'https://imsuk.cn' },
+            { title: '博客', url: 'https://imsuk.cn', target: '_blank' },
         ]
     },
     search: {
@@ -86,8 +88,15 @@ export default {
         ]
     },
     footer: {
-        enabled: false,
-        content: ''
+        enabled: true,
+        content: 'Copyright © by Suk and Fuukei All Rights Reserved.',
+        stats: 'Have a good time',
+        beforeSlot: false,
+        showSakuraIcon: true,
+        themeText: 'Sakurairo',
+        themeUrl: 'https://github.com/Suk-ldev/me_index',
+        authorText: 'Suk Fuukei',
+        authorUrl: 'https://imsuk.cn',
     },
     style: {
         themeSkin: '#8e78c6',

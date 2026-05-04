@@ -2,8 +2,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Standard cursor - high priority */
-    cursor: url('/res/cursor/normal.cur'), auto !important;
 }
 
 html, body {
@@ -11,52 +9,58 @@ html, body {
     padding: 0;
     overflow-x: hidden;
     min-height: 100vh;
+}
+
+html.iro-cat-cursor,
+html.iro-cat-cursor body,
+html.iro-cat-cursor * {
     cursor: url('/res/cursor/normal.cur'), auto !important;
 }
 
-/* Selected cursor - apply to links, buttons, etc. */
-a, button, input[type="button"], input[type="submit"], input[type="reset"], .button {
-    cursor: url('/res/cursor/No_Disponible.cur'), pointer !important;
+html.iro-cat-cursor {
+    a,
+    a:link,
+    a:visited,
+    a:hover,
+    a:active,
+    button,
+    button:hover,
+    button:focus,
+    button:active,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    .button,
+    [role="button"] {
+        cursor: url('/res/cursor/No_Disponible.cur'), pointer !important;
+    }
+
+    input,
+    select,
+    textarea {
+        cursor: url('/res/cursor/ayuda.cur'), auto !important;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    textarea:focus {
+        cursor: url('/res/cursor/texto.cur'), text !important;
+    }
+
+    .loading,
+    .spinner,
+    .iro-loading,
+    body.loading {
+        cursor: url('/res/cursor/work.cur'), progress !important;
+    }
 }
 
-/* Selected control unit cursor - apply to form elements */
-input, select, textarea {
-    cursor: url('/res/cursor/ayuda.cur'), auto !important;
-}
-
-/* Working state cursor - apply to loading elements */
-.loading, .spinner, .iro-loading {
-    cursor: url('/res/cursor/work.cur'), progress !important;
-}
-
-/* Override for specific cursor types */
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-    cursor: url('/res/cursor/texto.cur'), text !important;
-}
-
-/* Links should maintain pointer cursor */
-a, a:link, a:visited, a:hover, a:active {
-    cursor: url('/res/cursor/No_Disponible.cur'), pointer !important;
-}
-
-/* Buttons should maintain pointer cursor */
-button, button:hover, button:focus, button:active {
-    cursor: url('/res/cursor/No_Disponible.cur'), pointer !important;
-}
-
-/* Input buttons should maintain pointer cursor */
-input[type="button"], input[type="submit"], input[type="reset"] {
-    cursor: url('/res/cursor/No_Disponible.cur'), pointer !important;
-}
-
-/* Loading states */
-body.loading {
-    cursor: url('/res/cursor/work.cur'), progress !important;
-}
-
-/* Make sure all elements use custom cursors */
-div, span, h1, h2, h3, h4, h5, h6, p, ul, ol, li, table, tr, td, th, form, label, img {
-    cursor: url('/res/cursor/normal.cur'), auto !important;
+@media (pointer: fine) {
+    html.iro-dot-cursor,
+    html.iro-dot-cursor body,
+    html.iro-dot-cursor * {
+        cursor: none !important;
+    }
 }
 
 .iro-header-top {
@@ -74,18 +78,9 @@ div, span, h1, h2, h3, h4, h5, h6, p, ul, ol, li, table, tr, td, th, form, label
     overflow: hidden;
 }
 
-.iro-footer {
-    margin: 0 !important;
-    padding: 10px 0 !important;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 10;
-}
-
 .iro-layout {
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0 0 var(--iro-footer-space, 0px) !important;
 }
 
 .iro-container {

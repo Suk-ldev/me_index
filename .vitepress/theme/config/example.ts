@@ -15,6 +15,7 @@ export default {
     },
     features: {
         cherryBlossom: true,
+        cursor: 'dot',
     },
     cover: {
         avatar: '/avatar.png',
@@ -61,6 +62,12 @@ export default {
         enabled: true,
         content: 'Hello world!',
         beforeSlot: false,
+        stats: '静态页面 | VitePress',
+        showSakuraIcon: true,
+        themeText: 'Sakurairo Vitepress',
+        themeUrl: 'https://github.com/Suk-ldev/me_index',
+        authorText: 'Suk',
+        authorUrl: 'https://imsuk.cn',
     },
     error404: {
         title: '404 Not Found',

@@ -25,6 +25,13 @@ export namespace Iro {
          * 是否开启樱花飘落动画
          */
         cherryBlossom?: boolean;
+        /**
+         * 鼠标指针样式：
+         * - `cat`：使用 public/res/cursor 下的小猫指针
+         * - `dot`：使用跟随鼠标的圆点指针
+         * - `system`：使用系统默认指针
+         */
+        cursor?: 'cat' | 'dot' | 'system';
     };
 
     /**
@@ -82,6 +89,10 @@ export namespace Iro {
              * 链接的 url，直接作为 a 元素的 href 属性值
              */
             url: string;
+            /**
+             * 链接打开方式，例如 `_blank`
+             */
+            target?: string;
         }[];
     };
 
@@ -187,6 +198,30 @@ export namespace Iro {
          * 在设置了 iro-footer 插槽后，用来决定 content 是否放在插槽前面
          */
         beforeSlot?: boolean;
+        /**
+         * 页脚状态文字，例如静态站说明。留空则不显示
+         */
+        stats?: string;
+        /**
+         * 是否显示樱花图标
+         */
+        showSakuraIcon?: boolean;
+        /**
+         * 主题链接文字，不需要包含 Theme 前缀
+         */
+        themeText?: string;
+        /**
+         * 主题链接地址
+         */
+        themeUrl?: string;
+        /**
+         * 作者名，不需要包含 by 前缀
+         */
+        authorText?: string;
+        /**
+         * 作者链接地址
+         */
+        authorUrl?: string;
     };
 
     /**

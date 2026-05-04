@@ -51,6 +51,7 @@ npm run preview
 - `home.showContent`：是否显示 `index.md` 中封面之后的正文
 - `home.showPostList`：是否在首页显示文章列表
 - `features.cherryBlossom`：是否开启樱花飘落动画
+- `features.cursor`：鼠标指针样式，可选 `cat`、`dot`、`system`
 - `footer.enabled`：是否显示页脚
 - `cover.signature`：个人介绍；有内容时使用乱码打字动画，留空时使用 `cover.signatureApi` 的随机句子
 

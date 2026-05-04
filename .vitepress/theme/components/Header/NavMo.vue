@@ -21,7 +21,10 @@ const iroDark = inject('iroDark');
         </div>
         <div class="iro-nav-menu" v-if="iro.nav?.links">
             <ul>
-                <li v-for="link in iro.nav.links"><a :href="link.url">{{ link.title }}</a></li>
+                <li v-for="link in iro.nav.links">
+                    <a :href="link.url" :target="link.target"
+                        :rel="link.target == '_blank' ? 'external noopener' : undefined">{{ link.title }}</a>
+                </li>
             </ul>
         </div>
     </div>

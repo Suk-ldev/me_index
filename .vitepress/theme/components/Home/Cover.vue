@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref, onMounted, onUnmounted } from 'vue';
+import { inject, ref, onMounted, onUnmounted, watch } from 'vue';
 import CoverSocialButton from './CoverSocialButton.vue';
 
 import { data as iro } from '../../iro.data';
@@ -26,6 +26,11 @@ const appendCacheKey = (url, key) => {
 const getIroBgUrl = pageId => iroRandom ? appendCacheKey(iroBgUrlRaw, pageId) : iroBgUrlRaw;
 const iroBgUrl = ref(getIroBgUrl(iroBgPageId.value));
 
+const toCssUrl = url => `url("${String(url).replace(/"/g, '\\"')}")`;
+const syncLayoutBg = url => {
+    document.documentElement.style.setProperty('--iro-site-background-image', toCssUrl(url));
+};
+
 const preloadImage = url => new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(url);
@@ -48,6 +53,7 @@ const switchIroBg = async(step) => {
         iroBgPageId.value = nextPageId;
         iroBgUrl.value = nextUrl;
     }
+    catch {}
     finally {
         if (token == iroBgSwitchToken.value) {
             iroBgLoading.value = false;
@@ -177,6 +183,8 @@ const startRandomSignature = async() => {
 };
 
 onMounted(() => {
+    syncLayoutBg(iroBgUrl.value);
+
     if (signatureText) {
         startSignatureTyping([signatureText], true);
         return;
@@ -185,6 +193,8 @@ onMounted(() => {
     startRandomSignature();
 });
 
+watch(iroBgUrl, syncLayoutBg);
+
 onUnmounted(() => {
     clearSignatureTimer();
 });
@@ -192,7 +202,7 @@ onUnmounted(() => {
 
 <template>
     <div class="iro-header-top iro-root" :class="{ 'iro-light': !iroDark, 'iro-dark': iroDark }">
-        <figure class="iro-center-bg" :style="{ 'background-image': 'url(' + iroBgUrl + ')' }">
+        <figure class="iro-center-bg">
             <div class="iro-focus-info">
                 <div class="iro-favicon">
                     <a href="/">
@@ -254,10 +264,7 @@ onUnmounted(() => {
     .iro-center-bg {
         margin: 0;
         padding: 0;
-        background-position: top center;
-        background-repeat: no-repeat;
-        background-attachment: scroll;
-        background-size: cover;
+        background: transparent;
         display: block;
         height: 100vh;
 

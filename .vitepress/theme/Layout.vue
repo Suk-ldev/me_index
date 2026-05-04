@@ -9,6 +9,7 @@ import Panel from './components/Panel.vue';
 import NavMo from './components/Header/NavMo.vue';
 import Post from './components/Post/Post.vue'
 import Footer from './components/Footer.vue';
+import Cursor from './components/Cursor.vue';
 
 import { data as iro } from './iro.data';
 import CherryBlossom from './cherryBlossom.js';
@@ -48,7 +49,29 @@ const scrollHandle = () => {
 };
 scrollHandle();
 
+const appendCacheKey = (url, key) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}${key}`;
+};
+
+const isMobile = () => {
+    return navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+};
+
+const toCssUrl = url => `url("${String(url).replace(/"/g, '\\"')}")`;
+
+const getSiteBgUrl = () => {
+    const bg = iro.cover.background;
+    const raw = isMobile() ? bg.mobile : bg.desktop;
+    return (bg.random ?? false) ? appendCacheKey(raw, 0) : raw;
+};
+
+const syncSiteBg = () => {
+    document.documentElement.style.setProperty('--iro-site-background-image', toCssUrl(getSiteBgUrl()));
+};
+
 onMounted(() => {
+    syncSiteBg();
     addEventListener('scroll', scrollHandle);
     if (iro.features?.cherryBlossom ?? true) {
         cherryBlossom = new CherryBlossom();
@@ -57,6 +80,7 @@ onMounted(() => {
 });
 onUnmounted(() => {
     removeEventListener('scroll', scrollHandle);
+    document.documentElement.style.removeProperty('--iro-site-background-image');
     // Destroy cherry blossom animation
     if (cherryBlossom) {
         cherryBlossom.destroy();
@@ -76,12 +100,15 @@ for (let key in iro.style) {
     <div class="iro-container iro-root"
         :class="{ 'iro-nav-open': iroNavOpen, 'iro-light': !iroDark, 'iro-dark': iroDark }">
         <div class="iro-scroll-percent" id="bar" :style="{ width: scrollPercent + '%' }"></div>
+        <Cursor :mode="iro.features?.cursor ?? 'cat'"></Cursor>
         <div class="iro-nav-mo-container" :class="{ 'iro-nav-open': iroNavOpen }">
             <NavMo :iro-nav-open="iroNavOpen"></NavMo>
         </div>
         <Panel></Panel>
         <Nav></Nav>
-        <div class="iro-main-container" :class="{ 'iro-nav-open': iroNavOpen }" @click="closeNavMo">
+        <div class="iro-main-container"
+            :class="{ 'iro-nav-open': iroNavOpen }"
+            @click="closeNavMo">
             <div v-if="frontmatter.layout !== false" class="iro-layout" :class="frontmatter.pageClass">
                 <slot v-if="page.isNotFound" name="iro-not-found">
                     <NotFound />
@@ -165,10 +192,25 @@ for (let key in iro.style) {
 }
 
 .iro-container {
+    position: relative;
+    min-height: 100vh;
     transition: all 0.8s ease !important;
 
     &.iro-nav-open {
         overflow: hidden;
+    }
+
+    &::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image: var(--iro-site-background-image);
+        background-position: top center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        pointer-events: none;
+        transition: background-image 0.8s ease;
     }
 }
 
@@ -182,11 +224,17 @@ for (let key in iro.style) {
     z-index: 99999;
 }
 
+.iro-main-container {
+    position: relative;
+    z-index: 2;
+}
 
 .iro-layout {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width:860px) {
