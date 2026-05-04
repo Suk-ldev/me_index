@@ -41,14 +41,24 @@ export default {
                 name: 'Bilibili'
             },
             {
-                icon: 'mail',
-                link: 'mailto:Suk_blog@qq.com',
-                name: 'E-mail'
+                icon: 'dy',
+                link: 'https://www.douyin.com/user/MS4wLjABAAAAx2NtxCxp3eSxmZ4__vHHVUe5Niot1CXJdNlIuNiIIz6YhgE90VnWRP3ehD0Bhe3l',
+                name: 'Douyin'
+            },
+            {
+                icon: 'tw',
+                link: 'https://x.com/SukBlog21',
+                name: 'X'
             },
             {
                 icon: 'tg',
                 link: 'https://t.me/Suk_2',
                 name: 'telegram'
+            },
+            {
+                icon: 'mail',
+                link: 'mailto:Suk_blog@qq.com',
+                name: 'E-mail'
             },
         ]
     },
